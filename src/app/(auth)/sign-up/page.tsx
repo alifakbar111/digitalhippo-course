@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthValidator, TAuthValidator } from "@/lib/validators/AuthSchema";
+import { trpc } from "@/trpc/client";
 
 const Page = () => {
   const {
@@ -20,6 +21,10 @@ const Page = () => {
   } = useForm<TAuthValidator>({
     resolver: zodResolver(AuthValidator),
   });
+
+  const { data } = trpc.anyApiRoute.useQuery();
+
+  console.log(data);
 
   function onSubmit(data: TAuthValidator) {
     console.log(data);
