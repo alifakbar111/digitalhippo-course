@@ -4,16 +4,18 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Loader2 } from "lucide-react";
-import Link from "next/link";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthValidator, TAuthValidator } from "@/lib/validators/AuthSchema";
 import { trpc } from "@/trpc/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
 const Page = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -22,7 +24,24 @@ const Page = () => {
     resolver: zodResolver(AuthValidator),
   });
 
-  const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation();
+  const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({
+    onError: (err) => {
+      if (err.data?.code === "CONFLICT") {
+        toast({
+          title: "Uh oh! Something went wrong.",
+          description: "This email is already in use. Sign in instead ?",
+          variant: "destructive",
+        });
+        return;
+      }
+    },
+    onSuccess: ({ sentToEmail }) => {
+      toast({
+        title: `Verification email sent to ${sentToEmail}`,
+      });
+      router.push(`/verify-email?to=${sentToEmail}`);
+    },
+  });
 
   function onSubmit(data: TAuthValidator) {
     mutate(data);
