@@ -1,6 +1,6 @@
+import { getPayloadClient } from "../get-payload";
 import { AuthValidator } from "../lib/validators/AuthSchema";
 import { publicProcedure, router } from "./trpc";
-import { getPayloadClient } from "../get-payload";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -42,7 +42,7 @@ export const authRouter = router({
     .input(
       z.object({
         token: z.string(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { token } = input;
@@ -52,8 +52,32 @@ export const authRouter = router({
         token,
       });
       if (!isVerified) {
-        throw new TRPCError({'code': 'UNAUTHORIZED'});
+        throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return { success: true };
+    }),
+
+  signIn: publicProcedure
+    .input(AuthValidator)
+    .mutation(async ({ input, ctx }) => {
+      const { email, password } = input;
+      const { res } = ctx;
+
+      const payload = await getPayloadClient();
+
+      try {
+        await payload.login({
+          collection: "users",
+          data: {
+            email,
+            password,
+          },
+          res,
+        });
+        return { sucess: true };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err: unknown) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
     }),
 });

@@ -6,6 +6,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter } from "./trpc";
 import { nextApp, nextHandler } from "./next-utils";
 import { getPayloadClient } from "./get-payload";
+import { inferAsyncReturnType } from "@trpc/server";
 
 config({
   path: path.resolve(__dirname, "../.env"),
@@ -13,6 +14,16 @@ config({
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const createContext = ({
+  req,
+  res,
+}: trpcExpress.CreateExpressContextOptions) => ({
+  req,
+  res,
+});
+
+export type ExpressContext = inferAsyncReturnType<typeof createContext>;
 
 const start = async () => {
   const payload = await getPayloadClient({
@@ -30,14 +41,6 @@ const start = async () => {
   //     payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`);
   //   },
   // });
-
-  const createContext = ({
-    req,
-    res,
-  }: trpcExpress.CreateExpressContextOptions) => ({
-    req,
-    res,
-  });
 
   if (process.env.NEXT_BUILD) {
     app.listen(PORT, async () => {
