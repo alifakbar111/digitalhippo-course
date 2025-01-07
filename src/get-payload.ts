@@ -27,8 +27,8 @@ const transporterMailer = nodemailer.createTransport({
   port: 587,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: "alphonso.mann@ethereal.email", // generated ethereal user
-    pass: "FaaEX37S5sK1bC7rJR", // generated ethereal password
+    user: process.env.ETHER_EMAIL, // generated ethereal user
+    pass: process.env.ETHER_EMAIL_PASS, // generated ethereal password
   },
   // host: "smtp.resend.com",
   // secure: true,
