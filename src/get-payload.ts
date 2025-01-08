@@ -23,20 +23,20 @@ if (!cached) {
 }
 
 const transporterMailer = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.ETHER_EMAIL, // generated ethereal user
-    pass: process.env.ETHER_EMAIL_PASS, // generated ethereal password
-  },
-  // host: "smtp.resend.com",
-  // secure: true,
-  // port: 465,
+  // host: "smtp.ethereal.email",
+  // port: 587,
+  // secure: false, // true for 465, false for other ports
   // auth: {
-  //   user: "resend",
-  //   pass: process.env.RESEND_API_KEY,
+  //   user: process.env.ETHER_EMAIL, // generated ethereal user
+  //   pass: process.env.ETHER_EMAIL_PASS, // generated ethereal password
   // },
+  host: "smtp.resend.com",
+  secure: true,
+  port: 465,
+  auth: {
+    user: "resend",
+    pass: process.env.RESEND_API_KEY,
+  },
 });
 
 export const getPayloadClient = async ({
@@ -53,8 +53,9 @@ export const getPayloadClient = async ({
     cached.promise = payload.init({
       email: {
         transport: transporterMailer,
-        fromAddress: "alphonso.mann@ethereal.email",
-        fromName: "Alphonso Mann-Digitalhippo",
+        fromAddress: "onboarding@resend.dev",
+        fromName: "Digitalhippo - Dev",
+        // fromAddress: "alphonso.mann@ethereal.email",
       },
       secret: process.env.PAYLOAD_SECRET,
       local: initOptions?.express ? false : true,

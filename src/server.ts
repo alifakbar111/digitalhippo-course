@@ -66,7 +66,7 @@ const start = async () => {
     console.log("Next.js started");
 
     app.listen(PORT, async () => {
-      console.log(`Server listening on ${PORT}...`);
+      console.log(`Server listening on ${process.env.NEXT_PUBLIC_SERVER_URL}...`);
     });
   });
 };

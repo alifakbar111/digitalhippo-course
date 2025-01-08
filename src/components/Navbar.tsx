@@ -1,12 +1,17 @@
-import Link from "next/link";
+import Cart from "./Cart";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Icons } from "./ui/icons";
 import NavItems from "./NavItems";
 import { buttonVariants } from "./ui/button";
-import Cart from "./Cart";
+import { Icons } from "./ui/icons";
+import { getServerSideUser } from "@/lib/payload-utils";
+import { cookies } from "next/headers";
+import Link from "next/link";
 
-const Navbar = () => {
-  const user = null;
+const Navbar = async () => {
+  const nextCookies = cookies();
+  const { user } = await getServerSideUser(nextCookies);
+
+  console.log("user", user);
 
   return (
     <div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
@@ -28,28 +33,36 @@ const Navbar = () => {
                   {user ? null : (
                     <Link
                       href="/sign-in"
-                      className={buttonVariants({ variant: "ghost" })}
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
                     >
-                      Sign In
+                      Sign in
                     </Link>
                   )}
+
                   {user ? null : (
                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                   )}
+
                   {user ? (
                     <p></p>
                   ) : (
+                    // <UserAccountNav user={user} />
                     <Link
                       href="/sign-up"
-                      className={buttonVariants({ variant: "ghost" })}
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
                     >
-                      Create Account
+                      Create account
                     </Link>
                   )}
 
                   {user ? (
                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                   ) : null}
+
                   {user ? null : (
                     <div className="flex lg:ml-6">
                       <span
@@ -58,6 +71,7 @@ const Navbar = () => {
                       />
                     </div>
                   )}
+
                   <div className="ml-4 flow-root lg:ml-6">
                     <Cart />
                   </div>

@@ -35,7 +35,7 @@ const Page = () => {
     resolver: zodResolver(AuthValidator),
   });
 
-  const { mutate, isLoading } = trpc.auth.signIn.useMutation({
+  const { mutate: signIn, isLoading } = trpc.auth.signIn.useMutation({
     onSuccess: () => {
       toast({
         title: "Signed in successfully",
@@ -44,10 +44,13 @@ const Page = () => {
       router.refresh();
       if (origin) {
         router.push(`${origin}`);
+        return;
       }
       if (isSeller) {
         router.push("/sell");
+        return;
       }
+      router.push("/");
     },
     onError: (err) => {
       if (err.data?.code === "UNAUTHORIZED") {
@@ -61,7 +64,7 @@ const Page = () => {
   });
 
   function onSubmit(data: TAuthValidator) {
-    mutate(data);
+    signIn(data);
   }
 
   return (
