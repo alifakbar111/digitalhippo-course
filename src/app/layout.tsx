@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
-import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body
         className={cn(
           "relative h-full font-sans antialiased antialiased",
-          `${geistSans.variable} ${geistMono.variable}`
+          `${geistSans.variable} ${geistMono.variable}`,
         )}
       >
         <main className="relative flex flex-col min-h-screen">
@@ -42,7 +42,7 @@ export default function RootLayout({
             <div className="flex-grow flex-1">{children}</div>
           </Providers>
         </main>
-        <Toaster />
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

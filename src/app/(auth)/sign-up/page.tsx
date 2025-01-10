@@ -4,7 +4,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { AuthValidator, TAuthValidator } from "@/lib/validators/AuthSchema";
 import { trpc } from "@/trpc/client";
@@ -13,6 +12,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const Page = () => {
   const router = useRouter();
@@ -27,18 +27,12 @@ const Page = () => {
   const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({
     onError: (err) => {
       if (err.data?.code === "CONFLICT") {
-        toast({
-          title: "Uh oh! Something went wrong.",
-          description: "This email is already in use. Sign in instead ?",
-          variant: "destructive",
-        });
+        toast.error("This email is already in use. Sign in instead?");
         return;
       }
     },
     onSuccess: ({ sentToEmail }) => {
-      toast({
-        title: `Verification email sent to ${sentToEmail}`,
-      });
+      toast.error("Something went wrong. Please try again.");
       router.push(`/verify-email?to=${sentToEmail}`);
     },
   });
